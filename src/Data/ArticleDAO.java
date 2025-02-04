@@ -10,7 +10,35 @@ import java.util.ArrayList;
 
 public class ArticleDAO implements IData<Article> {
     public ArrayList<Article> getAll(){
-
+        PreparedStatement stmt = null;
+        ResultSet res = null;
+        ArrayList<Article> articles = new ArrayList<>();
+        Connection con = Conexion.getConnection();
+        try{
+            // Préparation de la requête SQL avec un type de ResultSet défilable
+            stmt = con.prepareStatement(
+                    "SELECT * FROM article"
+            );
+            res = stmt.executeQuery() ;
+            while(res.next()){
+                // Accéder aux colonnes par nom ou index
+                Article article = new Article(
+                    res.getString(1),
+                    res.getString(2),
+                    res.getDouble(3),
+                    res.getInt(4),
+                    res.getInt(0)
+                );
+                articles.add(article);
+            }
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        finally{
+            Conexion.closeEverything(stmt, res);
+        }
+        return articles;
     }
     public Article getById(int id){
         PreparedStatement stmt = null;
