@@ -99,10 +99,48 @@ public class ArticleDAO implements IData<Article> {
         }
         return generatedId;
     }
-    public int update(Article entity){
-
+    public int update(Article article){
+        PreparedStatement stmt = null;
+        Connection con = Conexion.getConnection();
+        int affectedRows = 0;
+        try{
+            String statement = "UPDATE article SET NOM = ?, DESRIPTION = ? , PRIX = ? , STOCK = ? WHERE ID_CLIENT = ?";
+            stmt = con.prepareStatement(statement);
+            stmt.setString(1,article.getNom());
+            stmt.setString(2,article.getDescription());
+            stmt.setDouble(3,article.getPrix());
+            stmt.setInt(3,article.getStock());
+            stmt.setInt(3,article.getId());
+            if (stmt.executeUpdate() == 1){
+                affectedRows++;
+            }
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        finally {
+            Conexion.closeEverything(stmt,null);
+        }
+        return affectedRows;
     }
     public int delete(int id){
-
+        PreparedStatement stmt = null;
+        Connection con = Conexion.getConnection();
+        int affectedRows = 0;
+        try{
+            String statement = "DELETE FROM article WHERE ID_ARTICLE = ?";
+            stmt = con.prepareStatement(statement);
+            stmt.setInt(1,id);
+            if (stmt.executeUpdate() == 1){
+                affectedRows++;
+            }
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        finally {
+            Conexion.closeEverything(stmt,null);
+        }
+        return affectedRows;
     }
 }
