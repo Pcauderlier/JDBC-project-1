@@ -1,6 +1,5 @@
-package FrontEnd;
+package GUI;
 
-import Data.Conexion;
 import Entity.Client;
 import Logic.ClientService;
 
