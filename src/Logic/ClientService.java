@@ -32,6 +32,12 @@ public class ClientService implements IService<Client> {
         return null;
     }
     public boolean delete(int id){
+        // Vérifier si une commande est lié a l'utilisateur
+        CommandeService cms = new CommandeService();
+        for (Integer cmdId : cms.getClientCommand(id)){
+            System.out.println("Suppression de la commande : " + cmdId + " avant de supprimer le client : " + id);
+            cms.delete(cmdId);
+        }
         int affected = clientDAO.delete(id);
         System.out.println("Client deleted: " + id);
         return affected > 0;

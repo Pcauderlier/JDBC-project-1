@@ -1,6 +1,8 @@
 package Entity;
 
-public class Article {
+import java.io.Serializable;
+
+public class Article implements IEntity{
     private int id;
     private String nom;
     private String description;
@@ -19,7 +21,9 @@ public class Article {
         this.prix = prix;
         this.stock = stock;
     }
-
+    public String toString() {
+        return "ID : " + id+" / NOM : " + nom + " / DESCRIPTION : " + description + " / PRIX : " + prix + " / STOCK : " + stock;
+    }
     public int getId() {
         return id;
     }

@@ -1,35 +1,33 @@
 package Data;
 
-import Entity.Article;
-import Entity.Client;
+import Entity.Commande;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class ArticleDAO implements IData<Article> {
-    public ArrayList<Article> getAll(){
+public class CommandeDAO implements IData<Commande> {
+    public ArrayList<Commande> getAll(){
         PreparedStatement stmt = null;
         ResultSet res = null;
-        ArrayList<Article> articles = new ArrayList<>();
+        ArrayList<Commande> commandes = new ArrayList<>();
         Connection con = Conexion.getConnection();
         try{
             // Préparation de la requête SQL avec un type de ResultSet défilable
             stmt = con.prepareStatement(
-                    "SELECT * FROM article"
+                    "SELECT * FROM commande"
             );
             res = stmt.executeQuery() ;
             while(res.next()){
                 // Accéder aux colonnes par nom ou index
-                Article article = new Article(
-                    res.getString(2),
-                    res.getString(3),
-                    res.getDouble(4),
-                    res.getInt(5),
-                    res.getInt(1)
+                Commande commande = new Commande(
+                        res.getInt(1),
+                        res.getInt(2),
+                        res.getTimestamp(3),
+                        res.getInt(4)
                 );
-                articles.add(article);
+                commandes.add(commande);
             }
         }
         catch(Exception e){
@@ -38,29 +36,28 @@ public class ArticleDAO implements IData<Article> {
         finally{
             Conexion.closeEverything(stmt, res);
         }
-        return articles;
+        return commandes;
     }
-    public Article getById(int id){
+    public Commande getById(int id){
         PreparedStatement stmt = null;
         ResultSet res = null;
-        Article article = null;
+        Commande commande = null;
 
         try {
             // Préparation de la requête SQL avec un type de ResultSet défilable
             Connection con = Conexion.getConnection();
             stmt = con.prepareStatement(
-                    "SELECT * FROM client WHERE ID_ARTICLE = ?"
+                    "SELECT * FROM commande WHERE ID_COMMANDE = ?"
             );
             stmt.setInt(1, id);
             res = stmt.executeQuery() ;
             if (res.next()){
                 // Accéder aux colonnes par nom ou index
-                article = new Article(
-                        res.getString(1),
-                        res.getString(2),
-                        res.getDouble(3),
-                        res.getInt(4),
-                        res.getInt(0)
+                commande = new Commande(
+                        res.getInt(1),
+                        res.getInt(2),
+                        res.getTimestamp(3),
+                        res.getInt(4)
                 );
             }
         }
@@ -70,20 +67,19 @@ public class ArticleDAO implements IData<Article> {
         finally{
             Conexion.closeEverything(stmt, res);
         }
-        return article;
+        return commande;
     }
-    public int add(Article article){
+    public int add(Commande commande){
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Connection con = Conexion.getConnection();
         int generatedId = -1;
         try{
-            String statement = "INSERT INTO article (NOM,DESCRIPTION,PRIX,STOCK) VALUES (? , ? , ? , ?)";
+            String statement = "INSERT INTO Commande (NUM_COMMANDE,DATE_COMMANDE,CLIENT_ID) VALUES (? , ? , ?)";
             stmt = con.prepareStatement(statement, PreparedStatement.RETURN_GENERATED_KEYS);
-            stmt.setString(1,article.getNom());
-            stmt.setString(2,article.getDescription());
-            stmt.setDouble(3,article.getPrix());
-            stmt.setInt(4,article.getStock());
+            stmt.setInt(1,commande.getNum_commande());
+            stmt.setTimestamp(2,commande.getDate_commande());
+            stmt.setDouble(3,commande.getClient_id());
             if (stmt.executeUpdate() == 1){
                 rs = stmt.getGeneratedKeys();
                 if(rs.next()){
@@ -99,18 +95,17 @@ public class ArticleDAO implements IData<Article> {
         }
         return generatedId;
     }
-    public int update(Article article){
+    public int update(Commande commande){
         PreparedStatement stmt = null;
         Connection con = Conexion.getConnection();
         int affectedRows = 0;
         try{
-            String statement = "UPDATE article SET NOM = ?, DESCRIPTION = ? , PRIX = ? , STOCK = ? WHERE ID_ARTICLE = ?";
+            String statement = "UPDATE commande SET NUM_COMMANDE = ?, DATE_COMMANDE = ? , CLIENT_ID = ? WHERE ID_COMMANDE = ?";
             stmt = con.prepareStatement(statement);
-            stmt.setString(1,article.getNom());
-            stmt.setString(2,article.getDescription());
-            stmt.setDouble(3,article.getPrix());
-            stmt.setInt(4,article.getStock());
-            stmt.setInt(5,article.getId());
+            stmt.setInt(1,commande.getNum_commande());
+            stmt.setTimestamp(2,commande.getDate_commande());
+            stmt.setInt(3,commande.getClient_id());
+            stmt.setInt(4,commande.getId());
             if (stmt.executeUpdate() == 1){
                 affectedRows++;
             }
@@ -128,7 +123,7 @@ public class ArticleDAO implements IData<Article> {
         Connection con = Conexion.getConnection();
         int affectedRows = 0;
         try{
-            String statement = "DELETE FROM article WHERE ID_ARTICLE = ?";
+            String statement = "DELETE FROM Commande WHERE ID_COMMANDE = ?";
             stmt = con.prepareStatement(statement);
             stmt.setInt(1,id);
             if (stmt.executeUpdate() == 1){
@@ -142,5 +137,28 @@ public class ArticleDAO implements IData<Article> {
             Conexion.closeEverything(stmt,null);
         }
         return affectedRows;
+    }
+    public ArrayList<Integer> getClientCommande(int client_id){
+        PreparedStatement stmt = null;
+        ResultSet res = null;
+        ArrayList<Integer> commandeIds = new ArrayList<>();
+        Connection con = Conexion.getConnection();
+        try{
+            System.out.println("RECHERCHE COMMANDE AVEC CLIENT ID = " + client_id);
+            stmt = con.prepareStatement("SELECT ID_COMMANDE FROM commande WHERE CLIENT_ID = ?");
+            stmt.setInt(1,client_id);
+            res = stmt.executeQuery() ;
+            while(res.next()){
+                commandeIds.add(res.getInt(1));
+            }
+
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        finally{
+            Conexion.closeEverything(stmt,res);
+        }
+        return commandeIds;
     }
 }
