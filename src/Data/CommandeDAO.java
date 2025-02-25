@@ -52,10 +52,11 @@ public class CommandeDAO implements IData<Commande> {
         PreparedStatement stmt = null;
         ResultSet res = null;
         Commande commande = null;
+        Connection con = Conexion.getConnection();
+
 
         try {
             // Préparation de la requête SQL avec un type de ResultSet défilable
-            Connection con = Conexion.getConnection();
             stmt = con.prepareStatement(
                     "SELECT * FROM commande WHERE ID_COMMANDE = ?"
             );
