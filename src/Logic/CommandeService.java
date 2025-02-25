@@ -1,7 +1,8 @@
 package Logic;
 
+import Data.ArticleCommandeDAO;
 import Data.CommandeDAO;
-import Entity.Commande;
+import Entity.*;
 import Entity.Commande;
 
 import java.util.ArrayList;
@@ -37,7 +38,12 @@ public class CommandeService implements IService<Commande> {
         System.out.println("Commande deleted: " + id);
         return affected > 0;
     }
-    public ArrayList<Integer> getClientCommand(int clientId){
-        return commandeDAO.getClientCommande(clientId);
+    public ArrayList<Commande> getClientCommand(Client client){
+        return commandeDAO.getClientCommande(client);
+    }
+    public void addArticle(Article article , Commande commande, int quantity){
+        ArticleCommande ac = new ArticleCommande (article, commande, quantity);
+        ArticleCommandeService acs = new ArticleCommandeService();
+        acs.add(ac);
     }
 }

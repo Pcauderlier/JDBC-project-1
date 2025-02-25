@@ -44,23 +44,24 @@ public class ArticleDAO implements IData<Article> {
         PreparedStatement stmt = null;
         ResultSet res = null;
         Article article = null;
+        System.out.println("Article ID: " + id);
 
         try {
             // Préparation de la requête SQL avec un type de ResultSet défilable
             Connection con = Conexion.getConnection();
             stmt = con.prepareStatement(
-                    "SELECT * FROM client WHERE ID_ARTICLE = ?"
+                    "SELECT * FROM article WHERE ID_ARTICLE = ?"
             );
             stmt.setInt(1, id);
             res = stmt.executeQuery() ;
             if (res.next()){
                 // Accéder aux colonnes par nom ou index
                 article = new Article(
-                        res.getString(1),
                         res.getString(2),
-                        res.getDouble(3),
-                        res.getInt(4),
-                        res.getInt(0)
+                        res.getString(3),
+                        res.getDouble(4),
+                        res.getInt(5),
+                        res.getInt(1)
                 );
             }
         }

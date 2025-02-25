@@ -1,7 +1,7 @@
 package Entity;
 
 public class Client implements IEntity {
-    private int id;
+    private int id = 0;
     private String nom;
     private String prenom;
 

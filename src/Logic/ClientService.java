@@ -2,6 +2,7 @@ package Logic;
 
 import Data.ClientDAO;
 import Entity.Client;
+import Entity.Commande;
 
 import java.util.ArrayList;
 
@@ -34,9 +35,10 @@ public class ClientService implements IService<Client> {
     public boolean delete(int id){
         // Vérifier si une commande est lié a l'utilisateur
         CommandeService cms = new CommandeService();
-        for (Integer cmdId : cms.getClientCommand(id)){
-            System.out.println("Suppression de la commande : " + cmdId + " avant de supprimer le client : " + id);
-            cms.delete(cmdId);
+        Client client = clientDAO.getById(id);
+        for (Commande cmd : cms.getClientCommand(client)){
+            System.out.println("Suppression de la commande : " + cmd.getId() + " avant de supprimer le client : " + id);
+            cms.delete(cmd.getId());
         }
         int affected = clientDAO.delete(id);
         System.out.println("Client deleted: " + id);

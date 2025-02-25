@@ -1,5 +1,6 @@
 package Data;
 
+import Entity.Client;
 import Entity.Commande;
 
 import java.sql.Connection;
@@ -13,12 +14,15 @@ public class CommandeDAO implements IData<Commande> {
         ResultSet res = null;
         ArrayList<Commande> commandes = new ArrayList<>();
         Connection con = Conexion.getConnection();
+        System.out.println("Check1");
         try{
             // Préparation de la requête SQL avec un type de ResultSet défilable
             stmt = con.prepareStatement(
                     "SELECT * FROM commande"
             );
             res = stmt.executeQuery() ;
+            System.out.println("Check2");
+
             while(res.next()){
                 // Accéder aux colonnes par nom ou index
                 Commande commande = new Commande(
@@ -28,14 +32,20 @@ public class CommandeDAO implements IData<Commande> {
                         res.getInt(4)
                 );
                 commandes.add(commande);
+                System.out.println("Check3");
+
             }
         }
         catch(Exception e){
+            System.out.println("Check4");
+
             System.out.println(e.getMessage());
         }
         finally{
             Conexion.closeEverything(stmt, res);
         }
+        System.out.println("Check5");
+
         return commandes;
     }
     public Commande getById(int id){
@@ -138,18 +148,32 @@ public class CommandeDAO implements IData<Commande> {
         }
         return affectedRows;
     }
-    public ArrayList<Integer> getClientCommande(int client_id){
+    public ArrayList<Commande> getClientCommande(Client client){
+        if (client==null){
+            System.out.println("pas de client");
+            return null;
+        }
+        int client_id = client.getId();
+        if (client_id == 0){
+            System.out.println("Le client n'est pas encore enregistrer");
+        }
         PreparedStatement stmt = null;
         ResultSet res = null;
-        ArrayList<Integer> commandeIds = new ArrayList<>();
+        ArrayList<Commande> commandes = new ArrayList<>();
         Connection con = Conexion.getConnection();
         try{
             System.out.println("RECHERCHE COMMANDE AVEC CLIENT ID = " + client_id);
-            stmt = con.prepareStatement("SELECT ID_COMMANDE FROM commande WHERE CLIENT_ID = ?");
+            stmt = con.prepareStatement("SELECT * FROM commande WHERE CLIENT_ID = ?");
             stmt.setInt(1,client_id);
             res = stmt.executeQuery() ;
             while(res.next()){
-                commandeIds.add(res.getInt(1));
+                Commande commande = new Commande(
+                        res.getInt(1),
+                        res.getInt(2),
+                        res.getTimestamp(3),
+                        res.getInt(4)
+                );
+                commandes.add(commande);
             }
 
         }
@@ -159,6 +183,6 @@ public class CommandeDAO implements IData<Commande> {
         finally{
             Conexion.closeEverything(stmt,res);
         }
-        return commandeIds;
+        return commandes;
     }
 }

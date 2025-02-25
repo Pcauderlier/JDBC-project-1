@@ -9,10 +9,12 @@ public class Commande implements IEntity {
     int num_commande;
     Timestamp date_commande;
     int client_id;
-    public Commande(int client_id, int num_commande) {
+    public static int comande_counter = 1;
+    public Commande(int client_id) {
         this.client_id = client_id;
         date_commande = Timestamp.from(Instant.now());
-        this.num_commande = num_commande ;
+        this.num_commande = comande_counter ;
+        comande_counter++;
 
     }
     public Commande(int id ,int num_commande, Timestamp date_commande, int client_id ) {
@@ -23,7 +25,9 @@ public class Commande implements IEntity {
         this.client_id = client_id;
     }
     public String toString() {
-        return "ID : " + id + " Num commande: " + num_commande + " Date commande: " + date_commande + " Client ID: " + client_id;
+        String str = new String();
+        str += "Comande : ID : " + id + " Num commande: " + num_commande + " Date commande: " + date_commande + " Client ID: " + client_id + "\n";
+        return str;
     }
     public int getId() {
         return id;
